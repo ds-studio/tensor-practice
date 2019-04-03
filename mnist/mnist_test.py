@@ -1,5 +1,7 @@
 import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import  input_data
+from tensorflow.examples.tutorials.mnist import input_data
+
+KMP_DUPLICATE_LIB_OK = True
 
 INPUT_NODE = 784
 OUTPUT_NODE = 10
@@ -66,7 +68,7 @@ def train(mnist):
 
     correct_prediction = tf.equal(tf.argmax(average_y, 1), tf.argmax(y_, 1))
 
-    accruacy_tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
@@ -78,15 +80,16 @@ def train(mnist):
 
         for i in range(TRAINING_STEPS):
             if i % 1000 == 0:
-                validate_acc = sess.run(accruacy, feed_dict=validate_feed)
+                validate_acc = sess.run(accuracy, feed_dict=validate_feed)
                 print("After %d training step(s), validation accruacy using average model is %g " % (i, validate_acc))
 
             xs, ys = mnist.train.next_batch(BATCH_SIZE)
             sess.run(train_op, feed_dict={x: xs, y_:ys})
-        test_acc = sess.run(accruacy, feed_dict=test_feed)
+        test_acc = sess.run(accuracy, feed_dict=test_feed)
         print("After %d training step(s), test accruacy using average model is %g" % (TRAINING_STEPS, test_acc))
 
-def main(argv = None):
+
+def main(argv=None):
     mnist = input_data.read_data_sets("../mnist_data", one_hot=True)
     train(mnist)
 
